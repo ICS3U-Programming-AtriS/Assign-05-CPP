@@ -1,8 +1,8 @@
 // Copyright (c) 2025 Atri Sarker All rights reserved.
 // .
 // Created By: Atri S
-// Date: Month DayNum, YEAR
-// DESCRIPTION HERE
+// Date: May 28, 2025
+// Game: Merge the Numbers
 
 #include <iostream>
 
