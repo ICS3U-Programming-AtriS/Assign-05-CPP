@@ -203,7 +203,7 @@ class Game {
         // FUNCTION THAT RETURNS A MATRIX OF SIZE [rowCount * colCount]
         // WITH EVERY ELEMENT BEING A 0
         std::vector<std::vector<int>> EmptyMatrix() {
-            // INITIALIZE AN EMPTY LIST
+            // INITIALIZE AN EMPTY VECTOR [MATRIX]
             std::vector<std::vector<int>> resultMatrix;
             // FOR LOOP [CREATE (rowCount) rows]
             for (int rowNum = 0; rowNum < rowCount; rowNum++) {
@@ -287,7 +287,7 @@ class Game {
                         printf("\033[1m%s%6d", textColor.c_str(), col);
                     } else {
                         // IF IT ISN't, SHORTEN IT USING SCIENTIFIC NOTATION
-                        printf("\033[1m%s%.0e", textColor.c_str(), col)
+                        printf("\033[1m%s%.0e", textColor.c_str(), col);
                     }
                     // PRINT A NEWLINE
                     printf("\n");
@@ -413,7 +413,7 @@ class Game {
                             // pass <do nothing>
                         }
                     default:
-                        break;
+                        // pass <do nothing>
                 }
             }
         }
@@ -436,26 +436,67 @@ class Game {
 
         // UP
         std::vector<std::vector<int>>
-        MoveUp(bool updateScore = false) {
-
+        MoveUp(bool updateScore = false){
+            // Initialize an empty matrix
+            std::vector<std::vector<int>> newMatrix = EmptyMatrix();
+            // Loop through all the column positions
+            for (int colIndex = 0; colIndex < colCount; colIndex++) {
+                // Get column
+                std::vector<int> col;
+                for (std::vector<int> row : gameMatrix) {
+                    col.push_back(row[colIndex]);
+                }
+                // Initialize an empty vector
+                std::vector<int> newCol;
+                // Extract all the non-zero numbers
+                for (int num : col) {
+                    if (num != 0) {
+                        newCol.push_back(num);
+                    }
+                }
+                // Loop through the extracted numbers, excluding the last
+                for (int rowIndex = 0; rowIndex < newCol.size() - 1;
+                 rowIndex++) {
+                    // Check if 2 adjacent numbers are the same
+                    if (newCol[rowIndex] == newCol[rowIndex]) {
+                        // MERGE
+                        newCol[rowIndex] *= 2;
+                        newCol[rowIndex + 1] = 0;
+                        // If updateScore is true, update the score
+                        if (updateScore) {
+                            score += newCol[rowIndex];
+                        }
+                    }
+                 }
+                 int realIndex = 0;
+                 for (int rowIndex = 0; rowIndex < newCol.size();
+                  rowIndex++) {
+                    // Ignore Zeroes
+                    if (newCol[rowIndex] != 0) {
+                        newMatrix[realIndex][rowIndex] = newCol[rowIndex];
+                        realIndex += 1;
+                    }
+                 }
+            }
+            return newMatrix;
         }
 
         // LEFT
-        std::vector<std::vector<int>>
+        std::vector<std::vector<int>> 
         MoveLeft(bool updateScore = false) {
-        
+            return gameMatrix;
         }
 
         // DOWN
         std::vector<std::vector<int>>
         MoveDown(bool updateScore = false) {
-            return;
+            return gameMatrix;
         }
 
         // RIGHT
         std::vector<std::vector<int>>
         MoveRight(bool updateScore = false) {
-            return;
+            return gameMatrix;
         }
 
         // FUNCTION THAT DETERMINES WHETHER THE GAME IS OVER OR NOT
@@ -464,6 +505,15 @@ class Game {
         }
 };
 
+// PROBLEM FUNCTION CALL
+void SummationGame(int numRows, int numCols) {
+    // Instantiate the game
+    Game newGame = Game(numRows, numCols);
+    // Play the Game
+    newGame.play();
+}
+
+// MAIN
 int main() {
     // Code Goes Here
 }
