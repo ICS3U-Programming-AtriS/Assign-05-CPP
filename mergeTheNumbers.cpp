@@ -8,6 +8,7 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 // Colors
 const char BLACK[] = "\033[0;30m";       // BLACK
@@ -441,9 +442,7 @@ class Game {
         // Initialize an empty matrix
         std::vector<std::vector<int>> newMatrix = EmptyMatrix();
         // Loop through all the column positions
-        printf("ColCount : %i \n", colCount);
         for (int colIndex = 0; colIndex < colCount; colIndex++) {
-            std::cout << colIndex;
             // Get column
             std::vector<int> col;
             for (std::vector<int> row : gameMatrix) {
@@ -454,14 +453,12 @@ class Game {
             // Extract all the non-zero numbers
             for (int num : col) {
                 if (num != 0) {
-                    printf("Num Added: %i\n", num);
                     newCol.push_back(num);
                 }
             }
             // Loop through the extracted numbers, excluding the last
             for (int rowIndex = 0; (2 + rowIndex) < (newCol.size() + 1);
                  rowIndex++) {
-                printf("%i", rowIndex);
                 // Check if 2 adjacent numbers are the same
                 if (newCol[rowIndex] == newCol[rowIndex + 1]) {
                     // MERGE
@@ -495,7 +492,50 @@ class Game {
     // DOWN
     std::vector<std::vector<int>>
     MoveDown(bool updateScore = false) {
-        return gameMatrix;
+        // Initialize an empty matrix
+        std::vector<std::vector<int>> newMatrix = EmptyMatrix();
+        // Loop through all the column positions
+        for (int colIndex = 0; colIndex < colCount; colIndex++) {
+            // Get column
+            std::vector<int> col;
+            for (std::vector<int> row : gameMatrix) {
+                col.push_back(row[colIndex]);
+            }
+            // Initialize an empty vector
+            std::vector<int> newCol;
+            // Extract all the non-zero numbers
+            for (int num : col) {
+                if (num != 0) {
+                    newCol.push_back(num);
+                }
+            }
+            // Reverse the vector
+            std::reverse(newCol.begin(), newCol.end());
+            // Loop through the extracted numbers, excluding the last
+            for (int rowIndex = 0; (2 + rowIndex) < (newCol.size() + 1);
+                 rowIndex++) {
+                // Check if 2 adjacent numbers are the same
+                if (newCol[rowIndex] == newCol[rowIndex + 1]) {
+                    // MERGE
+                    newCol[rowIndex] *= 2;
+                    newCol[rowIndex + 1] = 0;
+                    // If updateScore is true, update the score
+                    if (updateScore) {
+                        score += newCol[rowIndex];
+                    }
+                }
+            }
+            int realIndex = -1;
+            for (int rowIndex = 0; rowIndex < newCol.size();
+                 rowIndex++) {
+                // Ignore Zeroes
+                if (newCol[rowIndex] != 0) {
+                    newMatrix[newMatrix.size() + realIndex][colIndex] = newCol[rowIndex];
+                    realIndex -= 1;
+                }
+            }
+        }
+        return newMatrix;
     }
 
     // RIGHT
