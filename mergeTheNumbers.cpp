@@ -486,7 +486,45 @@ class Game {
     // LEFT
     std::vector<std::vector<int>>
     MoveLeft(bool updateScore = false) {
-        return gameMatrix;
+        // Initialize an empty matrix
+        std::vector<std::vector<int>> newMatrix = EmptyMatrix();
+        // Loop through all the row positions
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            // Get row
+            std::vector<int> row = gameMatrix[rowIndex];
+            // Initialize an empty vector
+            std::vector<int> newRow;
+            // Extract all the non-zero numbers
+            for (int col : row) {
+                if (col != 0) {
+                    newRow.push_back(col);
+                }
+            }
+            // Loop through the extracted numbers, excluding the last
+            for (int colIndex = 0; (2 + colIndex) < (newRow.size() + 1);
+                 colIndex++) {
+                // Check if 2 adjacent numbers are the same
+                if (newRow[colIndex] == newRow[colIndex + 1]) {
+                    // MERGE
+                    newRow[colIndex] *= 2;
+                    newRow[colIndex + 1] = 0;
+                    // If updateScore is true, update the score
+                    if (updateScore) {
+                        score += newRow[colIndex];
+                    }
+                }
+            }
+            int realIndex = 0;
+            for (int colIndex = 0; colIndex < newRow.size();
+                 colIndex++) {
+                // Ignore Zeroes
+                if (newRow[colIndex] != 0) {
+                    newMatrix[rowIndex][realIndex] = newRow[colIndex];
+                    realIndex += 1;
+                }
+            }
+        }
+        return newMatrix;
     }
 
     // DOWN
@@ -541,7 +579,47 @@ class Game {
     // RIGHT
     std::vector<std::vector<int>>
     MoveRight(bool updateScore = false) {
-        return gameMatrix;
+        // Initialize an empty matrix
+        std::vector<std::vector<int>> newMatrix = EmptyMatrix();
+        // Loop through all the row positions
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
+            // Get row
+            std::vector<int> row = gameMatrix[rowIndex];
+            // Initialize an empty vector
+            std::vector<int> newRow;
+            // Extract all the non-zero numbers
+            for (int col : row) {
+                if (col != 0) {
+                    newRow.push_back(col);
+                }
+            }
+            // Reverse the vector
+            std::reverse(newRow.begin(), newRow.end());
+            // Loop through the extracted numbers, excluding the last
+            for (int colIndex = 0; (2 + colIndex) < (newRow.size() + 1);
+                 colIndex++) {
+                // Check if 2 adjacent numbers are the same
+                if (newRow[colIndex] == newRow[colIndex + 1]) {
+                    // MERGE
+                    newRow[colIndex] *= 2;
+                    newRow[colIndex + 1] = 0;
+                    // If updateScore is true, update the score
+                    if (updateScore) {
+                        score += newRow[colIndex];
+                    }
+                }
+            }
+            int realIndex = -1;
+            for (int colIndex = 0; colIndex < newRow.size();
+                 colIndex++) {
+                // Ignore Zeroes
+                if (newRow[colIndex] != 0) {
+                    newMatrix[rowIndex][newMatrix[rowIndex].size() + realIndex] = newRow[colIndex];
+                    realIndex -= 1;
+                }
+            }
+        }
+        return newMatrix;
     }
 
     // FUNCTION THAT DETERMINES WHETHER THE GAME IS OVER OR NOT
