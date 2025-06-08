@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <cstdio>
 
 // Colors
 const char BLACK[] = "\033[0;30m";       // BLACK
@@ -185,7 +186,7 @@ std::string GetColorFromNumber(int num) {
 // Class for the game
 class Game {
     // Everything is going to be public because im lazy
-   public:
+ public:
     int rowCount;
     int colCount;
     std::vector<std::vector<int>> gameMatrix;
@@ -241,7 +242,8 @@ class Game {
         std::random_device seed;
         // MERSENNE TWISTER
         std::mt19937 mt(seed());
-        // Distribution that contains the range of numbers between 0 and num_empty_spaces
+        // Distribution that contains the range of numbers
+        // between 0 and num_empty_spaces
         std::uniform_int_distribution<int> randIndex(0, numEmptySpaces - 1);
         // Generate the random number
         int randNum = randIndex(mt);
@@ -365,7 +367,7 @@ class Game {
     // FUNCTION THAT GETS AND RETURNS THE USER'S ACTION
     std::string GetAction() {
         // DISPLAY PROMPT
-        printf("Enter a keypress (WASD/ARROW KEYS): \n");
+        printf("Enter a keypress (WASD): \n");
         while (true) {
             // Wait for any key press
             char key = getchar();
@@ -388,31 +390,34 @@ class Game {
                     return "RIGHT";
                     break;
                 // ARROW KEYS
-                case '\x1b': {
-                    // Arrow keys are composed of 3 characters in sequence
-                    // The first character was '\x1b'
-                    // The next 2 characters determine the direction
-                    // Match the 2 characters following "\x1b"
-                    char secondChar = getchar();
-                    char thirdChar = getchar();
-                    std::string arrowIdentity = "" + secondChar + thirdChar;
-                    if (arrowIdentity == "[A") {
-                        // [A is the up arrow
-                        return "UP";
-                    } else if (arrowIdentity == "[D") {
-                        // [D is the left arrow
-                        return "LEFT";
-                    } else if (arrowIdentity == "[B") {
-                        // [B is the down arrow
-                        return "DOWN";
-                    } else if (arrowIdentity == "[C") {
-                        // [C is the down arrow
-                        return "RIGHT";
-                    } else {
-                        // Incase it's not an arrow sequence
-                        // pass <do nothing>
-                    }
-                }
+                // [ DIDN"T FIND A WAY FOR getch() to work in codespaces "]
+                // Since the equivalent of getch() in c++ comes from
+                // a windows specific library
+                // case '\x1b': {
+                //     // Arrow keys are composed of 3 characters in sequence
+                //     // The first character was '\x1b'
+                //     // The next 2 characters determine the direction
+                //     // Match the 2 characters following "\x1b"
+                //     char secondChar = std::cin.get();
+                //     char thirdChar = std::cin.get();
+                //     std::string arrowIdentity = "" + secondChar + thirdChar;
+                //     if (arrowIdentity == "[A") {
+                //         // [A is the up arrow
+                //         return "UP";
+                //     } else if (arrowIdentity == "[D") {
+                //         // [D is the left arrow
+                //         return "LEFT";
+                //     } else if (arrowIdentity == "[B") {
+                //         // [B is the down arrow
+                //         return "DOWN";
+                //     } else if (arrowIdentity == "[C") {
+                //         // [C is the down arrow
+                //         return "RIGHT";
+                //     } else {
+                //         // Incase it's not an arrow sequence
+                //         // pass <do nothing>
+                //     }
+                // }
                 default:
                     // pass <do nothing>
                     break;
@@ -568,7 +573,8 @@ class Game {
                  rowIndex++) {
                 // Ignore Zeroes
                 if (newCol[rowIndex] != 0) {
-                    newMatrix[newMatrix.size() + realIndex][colIndex] = newCol[rowIndex];
+                    newMatrix[newMatrix.size() + realIndex][colIndex] =
+                     newCol[rowIndex];
                     realIndex -= 1;
                 }
             }
@@ -614,7 +620,9 @@ class Game {
                  colIndex++) {
                 // Ignore Zeroes
                 if (newRow[colIndex] != 0) {
-                    newMatrix[rowIndex][newMatrix[rowIndex].size() + realIndex] = newRow[colIndex];
+                    newMatrix[rowIndex]
+                    [newMatrix[rowIndex].size() + realIndex] =
+                    newRow[colIndex];
                     realIndex -= 1;
                 }
             }
@@ -643,6 +651,54 @@ void SummationGame(int numRows, int numCols) {
 
 // MAIN
 int main() {
-    // Code Goes Here
-    SummationGame(3, 3);
+    // DISPLAY INTRODUCTION MESSAGE
+    Purple("Welcome to Merge the Numbers!\n");
+    // Ask user for the amount of rows as a string
+    std::string numRowsString;
+    printf("Enter the amount of rows: ");
+    std::getline(std::cin, numRowsString);
+    // Ask user for the amount of columns as a string
+    std::string numColsString;
+    printf("Enter the amount of columns: ");
+    std::getline(std::cin, numColsString);
+    try {
+        size_t pos;
+        // Convert user input to an integer
+        // pos will be equal to the length of the input converted
+        int numRows = std::stoi(numRowsString, &pos);
+        // REFUSE FLOATS
+        if (pos != numRowsString.length()) {
+            throw std::invalid_argument("NO FLOATS");
+        }
+        try {
+            // Convert user input to an integer
+            // pos will be equal to the length of the input converted
+            int numCols = std::stoi(numColsString, &pos);
+            // REFUSE FLOATS
+            if (pos != numRowsString.length()) {
+                throw std::invalid_argument("NO FLOATS");
+            }
+            // Number of rows has to be greater than 0
+            if (numRows < 1) {
+                // Tell the user that the amount of rows is too low
+                Red("Number of rows must be greater than 0.");
+            } else if (numCols < 2) {
+                // Number of columns has to be greater than 1
+                // Tell the user that the amount of columns is too low
+                Red("Number of columns must be greater than 1.");
+            } else {
+                // CALL THE FUNCTION THAT CREATES AND PLAYS THE GAME
+                SummationGame(numRows, numCols);
+            }
+            // # Number of columns has to be greater than 1
+        } catch (std::invalid_argument) {
+            // Tell the user that their input wasn't an integer
+            Red();
+            printf("%s is not a valid integer.", numColsString.c_str());
+        }
+    } catch (std::invalid_argument) {
+        // Tell the user that their input wasn't an integer
+        Red();
+        printf("%s is not a valid integer.", numRowsString.c_str());
+    }
 }
