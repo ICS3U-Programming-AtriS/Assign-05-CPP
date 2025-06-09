@@ -668,7 +668,7 @@ int main() {
         size_t pos;
         // Convert user input to an integer
         // pos will be equal to the length of the input converted
-        int numRows = std::stoi(numRowsString, pos&);
+        int numRows = std::stoi(numRowsString, &pos);
         // REFUSE FLOATS
         if (pos != numRowsString.length()) {
             throw std::invalid_argument("NO FLOATS");
