@@ -4,12 +4,12 @@
 // Date: May 28, 2025
 // Game: Merge the Numbers
 
+#include <algorithm>
+#include <cstdio>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
-#include <algorithm>
-#include <cstdio>
 
 // Colors
 const char BLACK[] = "\033[0;30m";       // BLACK
@@ -98,7 +98,7 @@ void Orange(std::string msg = "") {
 // Function that clears the Terminal
 void ClearTerminal() {
     // Clears the Terminal
-    // std::system("clear");
+    std::system("clear");
 }
 
 // Function that displays the title
@@ -186,7 +186,7 @@ std::string GetColorFromNumber(int num) {
 // Class for the game
 class Game {
     // Everything is going to be public because im lazy
- public:
+   public:
     int rowCount;
     int colCount;
     std::vector<std::vector<int>> gameMatrix;
@@ -439,6 +439,9 @@ class Game {
         } else if (action == "RIGHT") {
             return MoveRight(updateScore);
         }
+
+        // PURELY FOR LINTER
+        return MoveUp(updateScore);
     }
 
     // UP
@@ -574,7 +577,7 @@ class Game {
                 // Ignore Zeroes
                 if (newCol[rowIndex] != 0) {
                     newMatrix[newMatrix.size() + realIndex][colIndex] =
-                     newCol[rowIndex];
+                        newCol[rowIndex];
                     realIndex -= 1;
                 }
             }
@@ -621,8 +624,8 @@ class Game {
                 // Ignore Zeroes
                 if (newRow[colIndex] != 0) {
                     newMatrix[rowIndex]
-                    [newMatrix[rowIndex].size() + realIndex] =
-                    newRow[colIndex];
+                             [newMatrix[rowIndex].size() + realIndex] =
+                                 newRow[colIndex];
                     realIndex -= 1;
                 }
             }
@@ -665,7 +668,7 @@ int main() {
         size_t pos;
         // Convert user input to an integer
         // pos will be equal to the length of the input converted
-        int numRows = std::stoi(numRowsString, &pos);
+        int numRows = std::stoi(numRowsString, pos&);
         // REFUSE FLOATS
         if (pos != numRowsString.length()) {
             throw std::invalid_argument("NO FLOATS");
@@ -675,17 +678,17 @@ int main() {
             // pos will be equal to the length of the input converted
             int numCols = std::stoi(numColsString, &pos);
             // REFUSE FLOATS
-            if (pos != numRowsString.length()) {
+            if (pos != numColsString.length()) {
                 throw std::invalid_argument("NO FLOATS");
             }
             // Number of rows has to be greater than 0
             if (numRows < 1) {
                 // Tell the user that the amount of rows is too low
-                Red("Number of rows must be greater than 0.");
+                Red("Number of rows must be greater than 0.\n");
             } else if (numCols < 2) {
                 // Number of columns has to be greater than 1
                 // Tell the user that the amount of columns is too low
-                Red("Number of columns must be greater than 1.");
+                Red("Number of columns must be greater than 1.\n");
             } else {
                 // CALL THE FUNCTION THAT CREATES AND PLAYS THE GAME
                 SummationGame(numRows, numCols);
@@ -694,11 +697,11 @@ int main() {
         } catch (std::invalid_argument) {
             // Tell the user that their input wasn't an integer
             Red();
-            printf("%s is not a valid integer.", numColsString.c_str());
+            printf("%s is not a valid integer.\n", numColsString.c_str());
         }
     } catch (std::invalid_argument) {
         // Tell the user that their input wasn't an integer
         Red();
-        printf("%s is not a valid integer.", numRowsString.c_str());
+        printf("%s is not a valid integer.\n", numRowsString.c_str());
     }
 }
