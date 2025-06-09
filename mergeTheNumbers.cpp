@@ -186,7 +186,7 @@ std::string GetColorFromNumber(int num) {
 // Class for the game
 class Game {
     // Everything is going to be public because im lazy
-   public:
+ public:
     int rowCount;
     int colCount;
     std::vector<std::vector<int>> gameMatrix;
